@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [ConfigModule.forRoot({
     isGlobal: true,
   }),
-    OrderModule],
+    OrderModule,],
   controllers: [AppController],
   providers: [AppService],
 })

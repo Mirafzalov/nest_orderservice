@@ -1,54 +1,31 @@
 import { Injectable, NotFoundException, Put } from '@nestjs/common';
-import { orders } from './data';
 import { CreateOrderDto } from './dto/order.dto';
+import { DataService } from '../db/data.service';
 
 @Injectable()
 export class OrderService {
+    constructor(private dataservice: DataService){}
 
     findAll() {
-        return orders
+        return this.dataservice.findAll()
     }
 
     create(data: CreateOrderDto) {
-        orders.push(data)
-        return orders
+        return this.dataservice.create(data)
     }
 
 
     findOne(id: number) {
-        const order = orders.find(order => order.id == id);
-
-        if (!order) {
-            throw new NotFoundException(`Order with id = ${id} is not found`)
-        }
-
-        return order
+        return this.dataservice.findOne(id)
     }
 
     update(id: number, data: CreateOrderDto) {
-        let order = orders.filter(o => o.id == id)
-
-        if (order.length < 1) {
-            throw new NotFoundException(`Order with id = ${id} is not found so it cannot be changed`)
-        }
-
-        let result = orders.map(order => order.id == id ? data : order)
-
-        return result
+        return this.dataservice.update(id,data)
     }
 
 
     remove(id: number) {
-        const res = orders.find(order => order.id === id);
-
-        if (!res) {
-            throw new NotFoundException(`Order with id = ${id} is not found`)
-        }
-
-
-        const data = orders.filter(order => order.id !== id);
-        
-        return data
+        return this.dataservice.remove(id)
     }
 
 
