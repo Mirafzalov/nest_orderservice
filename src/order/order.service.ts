@@ -1,32 +1,41 @@
 import { Injectable, NotFoundException, Put } from '@nestjs/common';
-import { CreateOrderDto } from './dto/order.dto';
-import { DataService } from '../db/data.service';
+import { CreateOrderDto } from '../dto/order.dto';
+import { Repository } from 'typeorm';
+import { Order } from 'src/db/entities/order.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrderService {
-    constructor(private dataservice: DataService){}
+    constructor(
+        @InjectRepository(Order)
+        private readonly orderRepository: Repository<Order>
+    ) { }
 
-    findAll() {
-        return this.dataservice.findAll()
+    async findAll() {
+        return this.orderRepository.find()
     }
 
-    create(data: CreateOrderDto) {
-        return this.dataservice.create(data)
-    }
-
-
-    findOne(id: number) {
-        return this.dataservice.findOne(id)
-    }
-
-    update(id: number, data: CreateOrderDto) {
-        return this.dataservice.update(id,data)
+    async create(data: CreateOrderDto) {
+        return await this.orderRepository.create(data)
     }
 
 
-    remove(id: number) {
-        return this.dataservice.remove(id)
+    async findOne(id: number) {
+        const products = await this.orderRepository.find()
+        return products.find(product => product.id === id)
+    }
+
+    async update(id: number, data: CreateOrderDto) {
+        return this.orderRepository.update(id, data)
+    }
+
+
+    async remove(id: number) {
+        // const products = await this.orderRepository.remove(+id)
+        
+
     }
 
 
 }
+
