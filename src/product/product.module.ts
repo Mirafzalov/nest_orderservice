@@ -10,7 +10,7 @@ import { Category } from 'src/db/entities/category.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Product, Category]),
+        TypeOrmModule.forFeature([Product]),
     ],
     controllers: [ProductController],
     providers: [ProductService]
