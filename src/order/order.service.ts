@@ -1,55 +1,50 @@
-import { Injectable, NotFoundException, Put } from '@nestjs/common';
-import { orders } from './data';
-import { CreateOrderDto } from './dto/order.dto';
+import { Injectable } from '@nestjs/common';
+import { CreateOrderDto } from '../dto/order.dto';
+import { Repository } from 'typeorm';
+import { Order } from 'src/db/entities/order.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+
 
 @Injectable()
 export class OrderService {
+    constructor(
+        @InjectRepository(Order)
+        private readonly orderRepository: Repository<Order>
+    ) { }
 
-    findAll() {
-        return orders
+    async findAll() {
+        return await this.orderRepository.find({
+            relations: {
+                orderProducts: {
+                    product: true
+                }
+            }
+        });
     }
 
-    create(data: CreateOrderDto) {
-        orders.push(data)
-        return orders
-    }
+    async create(data: CreateOrderDto) {
+        const newData = { ...data }
 
-
-    findOne(id: number) {
-        const order = orders.find(order => order.id == id);
-
-        if (!order) {
-            throw new NotFoundException(`Order with id = ${id} is not found`)
-        }
-
-        return order
-    }
-
-    update(id: number, data: CreateOrderDto) {
-        let order = orders.filter(o => o.id == id)
-
-        if (order.length < 1) {
-            throw new NotFoundException(`Order with id = ${id} is not found so it cannot be changed`)
-        }
-
-        let result = orders.map(order => order.id == id ? data : order)
-
-        return result
+        return await this.orderRepository.create(newData)
     }
 
 
-    remove(id: number) {
-        const res = orders.find(order => order.id === id);
+    async findOne(id: number) {
+        const products = await this.orderRepository.find()
+        return products.find(product => product.id === id)
+    }
 
-        if (!res) {
-            throw new NotFoundException(`Order with id = ${id} is not found`)
-        }
+    async update(id: number, data) {
+        return this.orderRepository.update(id, data)
+    }
 
 
-        const data = orders.filter(order => order.id !== id);
-        
-        return data
+    async remove(id: number) {
+        // const products = await this.orderRepository.remove(+id)
+
+
     }
 
 
 }
+
