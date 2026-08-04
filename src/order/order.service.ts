@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, Put } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from '../dto/order.dto';
 import { Repository } from 'typeorm';
 import { Order } from 'src/db/entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+
 
 @Injectable()
 export class OrderService {
@@ -12,11 +13,19 @@ export class OrderService {
     ) { }
 
     async findAll() {
-        return this.orderRepository.find()
+        return await this.orderRepository.find({
+            relations: {
+                orderProducts: {
+                    product: true
+                }
+            }
+        });
     }
 
     async create(data: CreateOrderDto) {
-        return await this.orderRepository.create(data)
+        const newData = { ...data }
+
+        return await this.orderRepository.create(newData)
     }
 
 
@@ -25,14 +34,14 @@ export class OrderService {
         return products.find(product => product.id === id)
     }
 
-    async update(id: number, data: CreateOrderDto) {
+    async update(id: number, data) {
         return this.orderRepository.update(id, data)
     }
 
 
     async remove(id: number) {
         // const products = await this.orderRepository.remove(+id)
-        
+
 
     }
 

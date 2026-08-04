@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order } from 'src/db/entities/order.entity';
 import { Product } from 'src/db/entities/product.entity';
 import { Repository } from 'typeorm';
 
@@ -30,7 +29,6 @@ export class ProductService {
         return product
     }
 
-
     async update(id, data) {
         const product = await this.productRepository.findOneBy({ id })
 
@@ -39,7 +37,7 @@ export class ProductService {
         }
         await this.productRepository.update(id, data)
         
-        return this.productRepository.findOneBy(id)
+        return await this.productRepository.findOneBy({id})
     }
 
 

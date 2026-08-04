@@ -7,13 +7,8 @@ export default new DataSource({
     username: 'admin',
     password: '123',
     database: 'db',
+    synchronize: false,
+    entities: ['src/**/*.entity{.ts,.js}'],
 
-    entities: [
-        'src/**/*.entity.ts',
-        'dist/**/*.entity.js',
-    ],
-    migrations: [
-        'src/migrations/*.ts',
-        'dist/migrations/*.js',
-    ]
+    migrations: ['src/db/migrations/*.ts']
 })

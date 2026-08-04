@@ -1,22 +1,22 @@
 
-import { IsString, IsNumber } from 'class-validator'
+import { IsNumber, IsArray, IsPositive, IsString } from 'class-validator'
 
 export class CreateOrderDto {
-    @IsNumber()
-    id: number;
 
+    @IsPositive()
     @IsNumber()
-    total: number;
+    totalPrice: number;
 
     @IsString()
-    product: string;
+    address: string;
 
+
+    @IsArray()
     @IsNumber()
-    quantity: number;
-
-    @IsString()
-    date: string;
+    orderProductIds: number[]
 
 }
+// {total, quantity, orderProductIds, productId} => {totalPrice: total, address: '', orderProducts: []} => as {totalPrice, address, orderProducts}
+
 
 

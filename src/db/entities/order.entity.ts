@@ -1,17 +1,23 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Product } from "./product.entity";
+import { OrderProduct } from "./orderProduct.entity";
 
 
-@Entity()
+@Entity('order')
 export class Order {
 
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({
+        type: 'decimal',
+        scale: 2
+    })
     totalPrice: number;
 
-    @Column('text')
+    @Column({
+        type: 'text',
+        nullable: true
+    })
     address: string;
 
     @CreateDateColumn()
@@ -27,26 +33,5 @@ export class Order {
 
     orderProducts: OrderProduct[];
 
-
 }
 
-
-@Entity()
-export class OrderProduct {
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column()
-    quantity: number
-
-
-    @ManyToOne(() => Order, (order) => order.orderProducts, {
-        onDelete: 'CASCADE'
-    })
-
-    order: Order;
-
-
-    @ManyToOne(() => Product)
-    product: Product
-}

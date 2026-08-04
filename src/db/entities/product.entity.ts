@@ -26,7 +26,13 @@ export class Product {
     @Column({
         default: 0
             })
-    discount: number;    
+    discount: number;
+    
+    @Column({default: 'Белый'})
+    color: string;
+
+    @Column({ default: true })
+    is_active: boolean;
 
     @CreateDateColumn()
     createdAt: Date;

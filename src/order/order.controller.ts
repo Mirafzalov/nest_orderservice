@@ -20,14 +20,14 @@ export class OrderController {
 
     @Get(':id')
     findOne(@Param('id', ParseIntPipe) id: number) {
-        3
         return this.orderservice.findOne(id)
     }
 
     @Put(':id')
     update(
         @Param('id', ParseIntPipe) id: number,
-        @Body() data: CreateOrderDto) {
+        @Body() data: CreateOrderDto
+    ) {
         return this.orderservice.update(id, data)
     }
 
