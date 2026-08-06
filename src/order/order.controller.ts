@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from '../dto/order.dto';
+import { JwtAuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 
 
@@ -8,6 +10,8 @@ import { CreateOrderDto } from '../dto/order.dto';
 export class OrderController {
     constructor(private readonly orderservice: OrderService) { }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
     @Get()
     findAll() {
         return this.orderservice.findAll()
@@ -33,7 +37,7 @@ export class OrderController {
 
     @Delete(':id')
     remove(@Param('id', ParseIntPipe) id: number) {
-        return this.orderservice.remove(+id)
+        return this.orderservice.remove(id)
     }
 
 }

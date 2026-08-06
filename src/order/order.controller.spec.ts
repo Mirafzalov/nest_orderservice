@@ -1,15 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
-import { DataService } from '../db/data.service';
 
 describe('OrderController', () => {
   let controller: OrderController;
 
+  const mockOrderRepository = {
+    findOne: jest.fn(),
+    findAll: jest.fn()
+  }
+
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OrderController],
-      providers: [OrderService, DataService]
+      providers: [
+        {
+          provide: OrderService,
+          useValue: mockOrderRepository
+        }
+      ]
     }).compile();
 
     controller = module.get<OrderController>(OrderController);
@@ -18,4 +28,6 @@ describe('OrderController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+
 });

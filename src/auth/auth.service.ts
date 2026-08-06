@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import * as argon2 from 'argon2';
-import { CreateUserDto, LoginUserDto } from 'src/dto/auth.dto';
-import { verify } from 'crypto';
+import { CreateUserDto, LoginUserDto } from '../dto/auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import { console } from 'inspector';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly jwtService: JwtService,
     ) { }
 
     async register(data: CreateUserDto) {
@@ -51,13 +53,26 @@ export class AuthService {
             throw new UnauthorizedException('Invalid username or password')
         }
 
-        return user
+        const payload = { sub: user.id, username: user.username }
+        const accessToken = await this.jwtService.signAsync(payload)
 
+        return { accessToken }
 
 
     }
 
     async findAll() {
-        return await this.userService.find()
+        const users =  await this.userService.find()
+
+        // const result:any[] =[] // {id, username, email}
+
+        // for (let user of users){
+        //     let { password, ...res} = user 
+        //     result.push(res)
+        //     console.log(res)
+        // }
+        // console.log(result)
+        return users
+
     }
 }

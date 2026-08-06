@@ -11,12 +11,11 @@ export class CreateOrderDto {
     address: string;
 
 
-    @IsArray()
-    @IsNumber()
-    orderProductIds: number[]
+    // @IsArray()
+    // @IsNumber()
+    // orderProductIds: number[]
 
 }
-// {total, quantity, orderProductIds, productId} => {totalPrice: total, address: '', orderProducts: []} => as {totalPrice, address, orderProducts}
 
 
 
