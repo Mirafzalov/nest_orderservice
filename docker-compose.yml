@@ -19,16 +19,40 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
-  nest:
-    build: .
-    container_name: nest
+
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  nest1:
+    build:
+      context: .
+      dockerfile: apps/order_service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    container_name: order_service
     volumes:
       - .:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - postgres
+      - rabbit
+
+  nest2:
+    build:
+      context: .
+      dockerfile: apps/payment-worker/Dockerfile
+    container_name: payment-worker
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - rabbit
 
 volumes:
   postgres_data:
