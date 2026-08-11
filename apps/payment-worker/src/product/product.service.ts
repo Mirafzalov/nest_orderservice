@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../db/entities/product.entity';
 import { Repository } from 'typeorm';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductService {
@@ -15,11 +16,24 @@ export class ProductService {
     }
 
     async create(data) {
-        const product = this.productRepository.create(data)
-        return await this.productRepository.save(product)
+        const productExist = await this.productRepository.findOne({
+            where: {
+                name: data.name,
+                price: data.price,
+                description: data.description
+            },
+        })
+        console.log('/////////////////////////', productExist)
+
+        if (!productExist) {
+            const product = this.productRepository.create(data)
+            return await this.productRepository.save(product)
+
+        }
+        return { success: false, error: 'This product already exists in DB' };
     }
 
-    async findOne(id: {id : number}) {
+    async findOne(id: { id: number }) {
         const product = await this.productRepository.findOneBy(id)
 
         if (!product) {
@@ -31,14 +45,14 @@ export class ProductService {
 
     async update(id, data) {
 
-        const product = await this.productRepository.findOneBy({id})
+        const product = await this.productRepository.findOneBy({ id })
 
         if (!product) {
             throw new NotFoundException('Product with that id is not found')
         }
         await this.productRepository.update(id, data)
-        
-        return await this.productRepository.findOneBy({id})
+
+        return await this.productRepository.findOneBy({ id })
     }
 
 
@@ -50,7 +64,7 @@ export class ProductService {
         }
 
         await this.productRepository.delete(id)
-        
+
         return { message: 'The product was succesfully deleted' }
 
     }

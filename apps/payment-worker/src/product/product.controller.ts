@@ -1,7 +1,9 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ProductService } from './product.service';
 import { CreateOrderDto } from '../dto/order.dto';
+import { CreateProductDto } from '../dto/product.dto';
+import { error } from 'console';
 
 @Controller()
 export class ProductController {
@@ -16,8 +18,25 @@ export class ProductController {
     }
 
     @MessagePattern('product.create')
-    create(@Payload() data) {
-        return this.productService.create(data)
+    async create(
+        @Payload() data: CreateProductDto,
+        @Ctx() context: RmqContext
+    ) {
+        const channel = context.getChannelRef()
+        const message = context.getMessage()
+
+        try {
+            const result = await this.productService.create(data)
+
+            channel.ack(message)
+
+            return result
+
+        } catch(error){
+
+            console.log(error)
+            channel.nack(message, false, false);
+        }
     }
 
     @MessagePattern('product.findOne')

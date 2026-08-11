@@ -1,24 +1,25 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { CreateUserDto, LoginUserDto } from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ClientProxy } from '@nestjs/microservices';
+import { first, firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly userService: UserService,
-        private readonly jwtService: JwtService,
+        @Inject('RABBIT_AUTH')
+        private readonly rabbit: ClientProxy,
+        private readonly jwtService: JwtService
     ) { }
 
     async register(data: CreateUserDto) {
 
         const { username, email, password } = data
 
-        const user = await this.userService.findByUsername(username)
+        const user = await firstValueFrom(this.rabbit.send('user.findUsername', username))
 
-        const isEmail = await this.userService.findByEmail(email)
-
+        const isEmail = await firstValueFrom(this.rabbit.send('user.findUserEmail', email))
 
         if (user) {
             throw new BadRequestException('Username already exists')
@@ -30,7 +31,7 @@ export class AuthService {
 
         const hashedPassword = await argon2.hash(password)
 
-        return await this.userService.create({ username: username, email: email, password: hashedPassword })
+        return await firstValueFrom(this.rabbit.send('user.create', { username: username, email: email, password: hashedPassword }))
 
     }
 
@@ -39,7 +40,7 @@ export class AuthService {
 
         const { username, password } = data
 
-        const user = await this.userService.findByUsername(username)
+        const user = await firstValueFrom(this.rabbit.send('user.findUsername', username))
 
 
         if (!user) {
@@ -60,17 +61,7 @@ export class AuthService {
 
     }
 
-    async findAll() {
-        const users =  await this.userService.find()
-
-        const result:any[] =[] // {id, username, email}
-
-        for (let user of users){
-            let { password, ...res} = user 
-            result.push(res)
-            console.log(res)
-        }
-        return result
-
+    async findAllUsers() {
+        return await firstValueFrom(this.rabbit.send('users.findAll', {}))
     }
 }

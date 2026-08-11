@@ -8,7 +8,14 @@ async function bootstrap() {
 
   const rqmservice = app.get(RabbitMQService)
   
+
+  app.connectMicroservice(rqmservice.getOptions('auth_queue'))
+
   app.connectMicroservice(rqmservice.getOptions('product_queue'))
+
+  app.connectMicroservice(rqmservice.getOptions('order_queue'))
+
+
 
   await app.startAllMicroservices();
 

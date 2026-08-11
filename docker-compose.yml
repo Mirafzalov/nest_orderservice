@@ -32,7 +32,9 @@ services:
       context: .
       dockerfile: apps/order_service/Dockerfile
     environment:
-      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
+    env_file:
+      - .env
     container_name: order_service
     volumes:
       - .:/app
@@ -47,6 +49,8 @@ services:
     build:
       context: .
       dockerfile: apps/payment-worker/Dockerfile
+    environment:
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
     container_name: payment-worker
     volumes:
       - .:/app

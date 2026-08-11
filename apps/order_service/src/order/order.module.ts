@@ -1,29 +1,16 @@
 import { Module } from '@nestjs/common';
-import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Order } from '../db/entities/order.entity';
-import { OrderProduct } from '../db/entities/orderProduct.entity';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RabbitMQModule } from '../rabbit/rabbitmq.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderProduct]),
-  ClientsModule.register([
-    {
-      name: 'ORDER_SERVICE',
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://guest:guest@rabbitmq:5672'],
-        queue: 'order_service_queue',
-        queueOptions: {
-          durable: true,
-        },
-      },
-    },
-  ]),
-
+  imports: [
+    RabbitMQModule.register({
+      name: 'RABBIT_ORDER',
+      queue: 'order_queue'
+    })
   ],
+
   controllers: [OrderController],
-  providers: [OrderService]
+  providers: []
 })
 export class OrderModule { } 

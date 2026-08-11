@@ -1,37 +1,45 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { ProductService } from './product.service';
+import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { CreateProductDto } from '../dto/product.dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+// import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
 
 @Controller('products')
 export class ProductController {
     constructor(
-        private readonly productService: ProductService
+        @Inject('RABBIT_PRODUCT')
+        private readonly rabbit: ClientProxy
     ){}
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
     @Get()
-    findAll(){
-        return this.productService.findAll()
+    async findAllProduct(){
+        return await firstValueFrom(this.rabbit.send('product.findAll', {}))
     }
 
     @Post()
-    create(@Body() data: CreateProductDto){
-        return this.productService.create(data)
+    async create(@Body() data: CreateProductDto){
+        return await firstValueFrom(this.rabbit.send('product.create', data))
     }
 
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number){
-        return this.productService.findOne(id)        
+    async findOne(@Param('id', ParseIntPipe) id: number){
+        return await firstValueFrom(this.rabbit.send('product.findOne', {id: id}))        
     }
 
     @Put(':id')
-    update(
+    async update(
         @Param('id', ParseIntPipe) id: number,
-        @Body() data: CreateProductDto){
-        return this.productService.update(id, data) 
+        @Body() productData: CreateProductDto){
+        return await firstValueFrom(this.rabbit.send('product.update', {id, productData}))
     }
 
     @Delete(':id')
-    delete(@Param('id', ParseIntPipe) id: number){
-        return this.productService.remove(id)
+    async delete(@Param('id', ParseIntPipe) id: number){
+        return await firstValueFrom(this.rabbit.send('product.delete', id))
     }
 }

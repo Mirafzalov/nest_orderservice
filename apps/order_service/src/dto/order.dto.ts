@@ -1,6 +1,6 @@
 
 import { IsNumber, IsArray, IsPositive, IsString, IsEnum } from 'class-validator'
-import { OrderStatus } from '../db/enum/orders-status';
+import { OrderStatus } from '../../../payment-worker/src/db/enum/orders-status';
 
 export class CreateOrderDto {
 

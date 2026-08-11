@@ -1,44 +1,49 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
-import { OrderService } from './order.service';
+import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
+// import { OrderService } from './order.service';
 import { CreateOrderDto } from '../dto/order.dto';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+import { request } from 'http';
 
 
 
 @Controller('orders')
 export class OrderController {
-    constructor(private readonly orderservice: OrderService) { }
+    constructor(
+        @Inject('RABBIT_ORDER')
+        private readonly rabbit: ClientProxy) { }
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
     @Get()
-    findAll() {
-        return this.orderservice.findAll()
+    async findAll(@Req() request: Request) {
+        return await firstValueFrom(this.rabbit.send('orders.findAll', {}))
     }
 
     @Post()
     async create(@Body() data: CreateOrderDto) {
-        return await this.orderservice.create(data)
+        return await firstValueFrom(this.rabbit.send('order.create', data))
 
     }
 
     @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.orderservice.findOne(id)
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        return await firstValueFrom(this.rabbit.send('order.findOne', id))
     }
 
     @Put(':id')
-    update(
+    async update(
         @Param('id', ParseIntPipe) id: number,
         @Body() data: CreateOrderDto
     ) {
-        return this.orderservice.update(id, data)
+        return await firstValueFrom(this.rabbit.send('order.update', {id, data}))
     }
 
     @Delete(':id')
-    remove(@Param('id', ParseIntPipe) id: number) {
-        return this.orderservice.remove(id)
+    async remove(@Param('id', ParseIntPipe) id: number) {
+        return await firstValueFrom(this.rabbit.send('order.delete', id))
     }
 
 }

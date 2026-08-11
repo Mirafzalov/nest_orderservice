@@ -27,7 +27,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
 
     OrderModule, ProductModule, UserModule, RabbitMQModule],
-  controllers: [PaymentWorkerController, OrderController],
+  controllers: [PaymentWorkerController],
   providers: [PaymentWorkerService],
 })
 export class PaymentWorkerModule { }

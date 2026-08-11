@@ -1,18 +1,21 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Product } from '../db/entities/product.entity';
+// import { TypeOrmModule } from '@nestjs/typeorm';
+// import { Product } from '../../../payment-worker/src/db/entities/product.entity';
 import { ProductController } from './product.controller';
-import { ProductService } from './product.service';
+import { RabbitMQModule } from '../rabbit/rabbitmq.module';
 
 
 
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Product]),
+        RabbitMQModule.register({
+            name: 'RABBIT_PRODUCT',
+            queue: 'product_queue'
+        })
     ],
     controllers: [ProductController],
-    providers: [ProductService]
+    providers: []
 
 })
 export class ProductModule { }
