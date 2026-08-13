@@ -23,6 +23,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
+  console.log('order_service is running...')
 }
 
 bootstrap();

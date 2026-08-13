@@ -8,38 +8,38 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 
 
 @Controller('products')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class ProductController {
     constructor(
         @Inject('RABBIT_PRODUCT')
         private readonly rabbit: ClientProxy
-    ){}
+    ) { }
 
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
     @Get()
-    async findAllProduct(){
+    async findAllProduct() {
         return await firstValueFrom(this.rabbit.send('product.findAll', {}))
     }
 
     @Post()
-    async create(@Body() data: CreateProductDto){
+    async create(@Body() data: CreateProductDto) {
         return await firstValueFrom(this.rabbit.send('product.create', data))
     }
 
     @Get(':id')
-    async findOne(@Param('id', ParseIntPipe) id: number){
-        return await firstValueFrom(this.rabbit.send('product.findOne', {id: id}))        
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        return await firstValueFrom(this.rabbit.send('product.findOne', { id: id }))
     }
 
     @Put(':id')
     async update(
         @Param('id', ParseIntPipe) id: number,
-        @Body() productData: CreateProductDto){
-        return await firstValueFrom(this.rabbit.send('product.update', {id, productData}))
+        @Body() productData: CreateProductDto) {
+        return await firstValueFrom(this.rabbit.send('product.update', { id, productData }))
     }
 
     @Delete(':id')
-    async delete(@Param('id', ParseIntPipe) id: number){
+    async delete(@Param('id', ParseIntPipe) id: number) {
         return await firstValueFrom(this.rabbit.send('product.delete', id))
     }
 }

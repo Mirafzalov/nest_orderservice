@@ -26,6 +26,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      # start_period: 30s
 
   nest1:
     build:
@@ -42,8 +48,12 @@ services:
     ports:
       - "3001:3000"
     depends_on:
-      - postgres
-      - rabbit
+      postgres:
+        condition: service_started
+      rabbit:
+        condition: service_healthy  
+      
+      
 
   nest2:
     build:
@@ -56,7 +66,20 @@ services:
       - .:/app
       - /app/node_modules
     depends_on:
-      - rabbit
+      rabbit:
+        condition: service_healthy
+
+  nest3:
+    build:
+      context: .
+      dockerfile: apps/notification-worker/Dockerfile
+    environment:
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
+    container_name: notification-worker
+    volumes:
+      - .:/app
+      - /app/node_modules
+
 
 volumes:
   postgres_data:

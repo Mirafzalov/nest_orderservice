@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { PaymentWorkerModule } from './payment-worker.module';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { RabbitMQService } from './rabbit/rabbitmq.service';
 
 async function bootstrap() {

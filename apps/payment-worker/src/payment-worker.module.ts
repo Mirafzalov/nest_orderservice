@@ -7,12 +7,13 @@ import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RabbitMQModule } from './rabbit/rabbitmq.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
 
     TypeOrmModule.forRoot({
@@ -25,6 +26,7 @@ import { ConfigModule } from '@nestjs/config';
       autoLoadEntities: true,
       synchronize: false,
     }),
+
 
     OrderModule, ProductModule, UserModule, RabbitMQModule],
   controllers: [PaymentWorkerController],
