@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from '../db/entities/order.entity';
 import { OrderProduct } from '../db/entities/orderProduct.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { NOTIFICATION_QUEUE } from 'apps/notification-worker/contracts/notification.constants';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [
+    imports: [ConfigModule,
         TypeOrmModule.forFeature([Order, OrderProduct]),
 
         ClientsModule.register([{
@@ -15,7 +17,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
             transport: Transport.RMQ,
             options: {
                 urls: ['amqp://guest:guest@rabbitmq:5672'],
-                queue: 'notification_queue',
+                queue: NOTIFICATION_QUEUE,
                 queueOptions: {
                     durable: true,
                 }

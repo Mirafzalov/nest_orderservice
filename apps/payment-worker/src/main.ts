@@ -6,7 +6,6 @@ async function bootstrap() {
   const app = await NestFactory.create(PaymentWorkerModule);
 
   const rqmservice = app.get(RabbitMQService)
-  
 
   app.connectMicroservice(rqmservice.getOptions('auth_queue'))
 
@@ -18,7 +17,7 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
 
-  await app.listen(3001);
+  await app.listen(3000);
   console.log('Payment-worker is ready')
 
 

@@ -7,8 +7,8 @@ import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RabbitMQModule } from './rabbit/rabbitmq.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule } from '@nestjs/config';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     }),
 
 
-    OrderModule, ProductModule, UserModule, RabbitMQModule],
+    OrderModule, ProductModule, UserModule, RabbitMQModule, HealthModule],
   controllers: [PaymentWorkerController],
   providers: [PaymentWorkerService],
 })

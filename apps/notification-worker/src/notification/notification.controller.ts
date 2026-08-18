@@ -7,15 +7,18 @@ export class NotificationController {
     constructor(
         private readonly notificationService: NotificationService
     ) { }
+    
 
     @EventPattern('notification.status')
     sendMessage(
         @Payload() data: { notification, result },
         @Ctx() context: RmqContext
     ) {
+        
         const message = context.getMessage()
         const channel = context.getChannelRef()
 
+        console.log('IIIIIIIIIIIIIIIIIIIII')
         channel.ack(message)
 
         let {notification, result } = data
@@ -38,7 +41,6 @@ export class NotificationController {
 
 ━━━━━━━━━━━━━━━━
 `
-
         }
 
         this.notificationService.sendMessage(text)

@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
-import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
 
 @Module({
@@ -14,7 +13,7 @@ import { HealthModule } from './health/health.module';
         }),
     NotificationModule,
     HealthModule],
-  controllers: [AppController, HealthController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

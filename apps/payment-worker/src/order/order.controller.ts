@@ -22,7 +22,6 @@ export class OrderController {
         @Payload() data: CreateOrderDto,
         @Ctx() context: RmqContext
     ) {
-
         const message = context.getMessage()
         const channel = context.getChannelRef()
         let result: any
