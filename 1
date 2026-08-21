@@ -1,0 +1,65 @@
+[1mdiff --git a/apps/order_service/src/product/product.controller.ts b/apps/order_service/src/product/product.controller.ts[m
+[1mindex f22a179..c779f5c 100644[m
+[1m--- a/apps/order_service/src/product/product.controller.ts[m
+[1m+++ b/apps/order_service/src/product/product.controller.ts[m
+[36m@@ -2,7 +2,6 @@[m [mimport { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put,[m
+ import { CreateProductDto } from '../dto/product.dto';[m
+ import { ClientProxy } from '@nestjs/microservices';[m
+ import { firstValueFrom } from 'rxjs';[m
+[31m-// import { AuthGuard } from '@nestjs/passport';[m
+ import { JwtAuthGuard } from '../auth/auth.guard';[m
+ import { ApiBearerAuth } from '@nestjs/swagger';[m
+ [m
+[1mdiff --git a/docker-compose.yml b/docker-compose.yml[m
+[1mindex ea86735..a688f7e 100644[m
+[1m--- a/docker-compose.yml[m
+[1m+++ b/docker-compose.yml[m
+[36m@@ -14,7 +14,7 @@[m [mservices:[m
+       - "5432:5432"[m
+     healthcheck:[m
+       test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB" ][m
+[31m-      interval: 15s[m
+[32m+[m[32m      interval: 120s[m
+       timeout: 10s[m
+       retries: 5[m
+       start_period: 10s[m
+[36m@@ -34,7 +34,7 @@[m [mservices:[m
+       - "15672:15672"[m
+     healthcheck:[m
+       test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ][m
+[31m-      interval: 15s[m
+[32m+[m[32m      interval: 120s[m
+       timeout: 10s[m
+       retries: 5[m
+       start_period: 10s[m
+[36m@@ -45,10 +45,10 @@[m [mservices:[m
+       dockerfile: apps/order_service/Dockerfile[m
+     healthcheck:[m
+       test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ][m
+[31m-      interval: 15s[m
+[32m+[m[32m      interval: 120s[m
+       timeout: 10s[m
+       retries: 5[m
+[31m-      start_period: 5s[m
+[32m+[m[32m      start_period: 10s[m
+     env_file:[m
+       - .env[m
+     container_name: order_service[m
+[36m@@ -69,7 +69,7 @@[m [mservices:[m
+       dockerfile: apps/payment-worker/Dockerfile[m
+     healthcheck:[m
+       test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ][m
+[31m-      interval: 15s[m
+[32m+[m[32m      interval: 120s[m
+       timeout: 10s[m
+       retries: 5[m
+       start_period: 10s[m
+[36m@@ -93,7 +93,7 @@[m [mservices:[m
+       dockerfile: apps/notification-worker/Dockerfile[m
+     healthcheck:[m
+       test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ][m
+[31m-      interval: 15s[m
+[32m+[m[32m      interval: 120s[m
+       timeout: 10s[m
+       retries: 5[m
+       start_period: 10s[m

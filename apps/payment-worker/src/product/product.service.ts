@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../db/entities/product.entity';
 import { Repository } from 'typeorm';
-import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductService {
@@ -23,7 +22,6 @@ export class ProductService {
                 description: data.description
             },
         })
-        console.log('/////////////////////////', productExist)
 
         if (!productExist) {
             const product = this.productRepository.create(data)

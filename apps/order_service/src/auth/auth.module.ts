@@ -9,7 +9,7 @@ import { RabbitMQModule } from '../rabbit/rabbitmq.module';
 @Module({
   imports: [PassportModule, JwtModule.register({
     secret: process.env.JWT_SECRET || 'default_secret',
-    signOptions: { expiresIn: '2h' }
+    signOptions: { expiresIn: '8h' }
   }),
 
     RabbitMQModule.register({
