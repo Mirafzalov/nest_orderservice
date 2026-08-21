@@ -27,6 +27,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/payment-worker/tsconfig.app.json"
       }
+    },
+    "notification-worker": {
+      "type": "application",
+      "root": "apps/notification-worker",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification-worker/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification-worker/tsconfig.app.json"
+      }
     }
   }
 }

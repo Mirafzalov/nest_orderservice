@@ -5,8 +5,6 @@ import { JwtAuthGuard } from '../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { request } from 'http';
-
 
 
 @Controller('orders')
@@ -22,11 +20,13 @@ export class OrderController {
         return await firstValueFrom(this.rabbit.send('orders.findAll', {}))
     }
 
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
     @Post()
     async create(@Body() data: CreateOrderDto) {
         return await firstValueFrom(this.rabbit.send('order.create', data))
-
     }
+
 
     @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -38,7 +38,7 @@ export class OrderController {
         @Param('id', ParseIntPipe) id: number,
         @Body() data: CreateOrderDto
     ) {
-        return await firstValueFrom(this.rabbit.send('order.update', {id, data}))
+        return await firstValueFrom(this.rabbit.send('order.update', { id, data }))
     }
 
     @Delete(':id')

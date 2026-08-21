@@ -8,7 +8,7 @@ export class RabbitMQService {
 
     getOptions(queue: string, noAck = false): RmqOptions {
         return {
-            transport: Transport.RMQ,
+            transport: Transport. RMQ,
             options: {
                 urls: [this.configService.get<string>('RABBITMQ_URI')!],
                 queue,

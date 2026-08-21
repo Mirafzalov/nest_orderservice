@@ -4,12 +4,28 @@ import { OrderService } from './order.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from '../db/entities/order.entity';
 import { OrderProduct } from '../db/entities/orderProduct.entity';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { NOTIFICATION_QUEUE } from 'apps/notification-worker/contracts/notification.constants';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Order, OrderProduct])
+    imports: [ConfigModule,
+        TypeOrmModule.forFeature([Order, OrderProduct]),
+
+        ClientsModule.register([{
+            name: 'RABBIT_NOTIFICATION',
+            transport: Transport.RMQ,
+            options: {
+                urls: ['amqp://guest:guest@rabbitmq:5672'],
+                queue: NOTIFICATION_QUEUE,
+                queueOptions: {
+                    durable: true,
+                }
+            }
+
+        }]),
     ],
     controllers: [OrderController],
     providers: [OrderService]
 })
-export class OrderModule {}
+export class OrderModule { }

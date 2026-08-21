@@ -1,11 +1,14 @@
-import { Controller } from '@nestjs/common';
-import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
+import { Controller, Inject, UseGuards } from '@nestjs/common';
+import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from '../dto/order.dto';
+
 
 @Controller('order')
 export class OrderController {
     constructor(
+        @Inject('RABBIT_NOTIFICATION')
+        private readonly rabbit: ClientProxy,
         private readonly orderService: OrderService
     ) { }
 
@@ -21,23 +24,41 @@ export class OrderController {
     ) {
         const message = context.getMessage()
         const channel = context.getChannelRef()
+        let result: any
+        let notification = {}
+
 
         try {
             const order = await this.orderService.create(data)
 
             channel.ack(message)
+            
+            notification = {status: 'paid'}
 
-
-            return order
+            result = order
+            console.log('success')
 
         } catch(error) {
             console.log(error.message)
+            
             channel.nack(message, false, false)   
 
-            return {message: error}
+            notification = {status: 'failed'}
+
+            result = error.message
+            
+            console.log('fail')
+
         }
+        console.log('IT WORKED')
+
+        this.rabbit.emit('notification.status', {notification, result})
+
+        return result
 
     }
+
+
     @MessagePattern('order.findOne')
     findOne(@Payload() id: number) {
         return this.orderService.findOne(id)

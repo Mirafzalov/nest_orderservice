@@ -8,11 +8,12 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RabbitMQModule } from './rabbit/rabbitmq.module';
 import { ConfigModule } from '@nestjs/config';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
 
     TypeOrmModule.forRoot({
@@ -26,7 +27,8 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: false,
     }),
 
-    OrderModule, ProductModule, UserModule, RabbitMQModule],
+
+    OrderModule, ProductModule, UserModule, RabbitMQModule, HealthModule],
   controllers: [PaymentWorkerController],
   providers: [PaymentWorkerService],
 })
