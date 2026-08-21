@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put, 
 import { CreateProductDto } from '../dto/product.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-// import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
