@@ -7,9 +7,11 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 
+COPY . .
+
+
 RUN npm isntall
 
 
-COPY . .
 
 CMD ["npx", "nest", "start", "payment-worker", "--watch"]

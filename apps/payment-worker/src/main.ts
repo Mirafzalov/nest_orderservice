@@ -1,6 +1,11 @@
+import { startTracing } from './tracing';
 import { NestFactory } from '@nestjs/core';
 import { PaymentWorkerModule } from './payment-worker.module';
 import { RabbitMQService } from './rabbit/rabbitmq.service';
+
+
+startTracing();
+
 
 async function bootstrap() {
   const app = await NestFactory.create(PaymentWorkerModule);

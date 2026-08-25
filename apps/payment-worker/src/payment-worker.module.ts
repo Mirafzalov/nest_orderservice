@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PaymentWorkerController } from './payment-worker.controller';
 import { PaymentWorkerService } from './payment-worker.service';
-import { OrderController } from './order/order.controller';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';

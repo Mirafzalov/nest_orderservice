@@ -12,15 +12,8 @@ export class NotificationController {
     @EventPattern('notification.status')
     sendMessage(
         @Payload() data: { notification, result },
-        @Ctx() context: RmqContext
     ) {
         
-        const message = context.getMessage()
-        const channel = context.getChannelRef()
-
-        console.log('IIIIIIIIIIIIIIIIIIIII')
-        channel.ack(message)
-
         let {notification, result } = data
         let text = '';
 

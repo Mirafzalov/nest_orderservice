@@ -4,13 +4,13 @@ FROM node:24.18.0
 WORKDIR /app
 
 
-COPY package.json ./
-
-
-COPY . .
+COPY package.json package-lock.json ./
 
 
 RUN npm install
+
+
+COPY . .
 
 
 CMD ["npx", "nest", "start", "notification-worker", "--watch"]

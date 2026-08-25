@@ -20,10 +20,7 @@ export class OrderController {
     @MessagePattern('order.create')
     async create(
         @Payload() data: CreateOrderDto,
-        @Ctx() context: RmqContext
     ) {
-        const message = context.getMessage()
-        const channel = context.getChannelRef()
         let result: any
         let notification = {}
 
@@ -31,7 +28,6 @@ export class OrderController {
         try {
             const order = await this.orderService.create(data)
 
-            channel.ack(message)
             
             notification = {status: 'paid'}
 
@@ -41,7 +37,6 @@ export class OrderController {
         } catch(error) {
             console.log(error.message)
             
-            channel.nack(message, false, false)   
 
             notification = {status: 'failed'}
 
@@ -50,7 +45,6 @@ export class OrderController {
             console.log('fail')
 
         }
-        console.log('IT WORKED')
 
         this.rabbit.emit('notification.status', {notification, result})
 

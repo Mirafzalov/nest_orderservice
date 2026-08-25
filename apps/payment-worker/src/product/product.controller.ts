@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { ProductService } from './product.service';
 import { CreateOrderDto } from '../dto/order.dto';
@@ -8,34 +8,29 @@ import { error } from 'console';
 @Controller()
 export class ProductController {
     constructor(
-        private readonly productService: ProductService
+        private readonly productService: ProductService,
     ) { }
 
 
     @MessagePattern('product.findAll')
     findAll(@Payload() data: any) {
+
+        console.log('PRODUCT CONTROLLER')
         return this.productService.findAll()
     }
 
     @MessagePattern('product.create')
     async create(
-        @Payload() data: CreateProductDto,
-        @Ctx() context: RmqContext
+        @Payload() data: CreateProductDto
     ) {
-        const channel = context.getChannelRef()
-        const message = context.getMessage()
-
         try {
             const result = await this.productService.create(data)
 
-            channel.ack(message)
-
             return result
 
-        } catch(error){
+        } catch (error) {
 
             console.log(error)
-            channel.nack(message, false, false);
         }
     }
 

@@ -21,6 +21,7 @@ export class RabbitMQModule {
                                 queue: queue,
                                 queueOptions: { durable: true },
                                 autoDelete: false,
+                                // noAck: true
                             },
                             replyQueueOptions: {
                                 autoDelete: true,

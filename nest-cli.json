@@ -10,6 +10,7 @@
   "monorepo": true,
   "root": "apps/order_service",
   "projects": {
+    
     "order_service": {
       "type": "application",
       "root": "apps/order_service",
