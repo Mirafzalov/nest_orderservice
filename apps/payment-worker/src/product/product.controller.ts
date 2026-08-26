@@ -14,8 +14,6 @@ export class ProductController {
 
     @MessagePattern('product.findAll')
     findAll(@Payload() data: any) {
-
-        console.log('PRODUCT CONTROLLER')
         return this.productService.findAll()
     }
 

@@ -1,39 +1,28 @@
-import { DynamicModule, Global, Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { ClientsModule, Transport } from "@nestjs/microservices";
-
-
+import { TracingClientRMQ } from "../tracing-client-rmq";
 
 @Module({})
 export class RabbitMQModule {
-    static register({ name, queue }: { name: string, queue: string }): DynamicModule {
+    static register({ name, queue }: { name: string; queue: string }): DynamicModule {
+        const rmqClientProvider = {
+            provide: name,
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService) => {
+                return new TracingClientRMQ({
+                    urls: [configService.get<string>('RABBITMQ_URI')!],
+                    queue: queue,
+                    queueOptions: { durable: true },
+                });
+            },
+            inject: [ConfigService],
+        };
+
         return {
             module: RabbitMQModule,
-            imports: [
-                ClientsModule.registerAsync([
-                    {
-                        name,
-                        imports: [ConfigModule],
-                        useFactory: (configService: ConfigService) => ({
-                            transport: Transport.RMQ,
-                            options: {
-                                urls: [configService.get<string>('RABBITMQ_URI')!],
-                                queue: queue,
-                                queueOptions: { durable: true },
-                                autoDelete: false,
-                                // noAck: true
-                            },
-                            replyQueueOptions: {
-                                autoDelete: true,
-                                exclusive: true,
-                            },
-
-                        }),
-                        inject: [ConfigService],
-                    },
-                ]),
-            ],
-            exports: [ClientsModule],
+            imports: [ConfigModule],
+            providers: [rmqClientProvider],
+            exports: [name], 
         };
     }
 }

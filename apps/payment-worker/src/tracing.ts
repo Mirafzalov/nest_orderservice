@@ -1,7 +1,7 @@
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
+import { ConsoleSpanExporter, ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
 import { ExportResult, ExportResultCode } from '@opentelemetry/core';
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
@@ -18,7 +18,6 @@ class CustomizedExporter implements SpanExporter {
         span.attributes['rpc.method'] ||
         span.name) as string;
 
-      if (path.includes('reply-to') && !isError) continue;
 
       const isServerSpan = span.kind === SpanKind.SERVER;
       const isConsumerSpan = span.kind === SpanKind.CONSUMER;
@@ -33,9 +32,9 @@ class CustomizedExporter implements SpanExporter {
         service: span.resource.attributes[ATTR_SERVICE_NAME],
         trace_id: span.spanContext().traceId,
         span_id: span.spanContext().spanId,
-        operation: span.name,
-        method: (span.attributes['http.method'] || span.attributes['http.request.method'] || null) as string | null,
-        path,
+        queue: span.name.split(' ')[0],
+        // method: (span.attributes['http.method'] || span.attributes['http.request.method'] || null) as string | null,
+        // path,
         duration_ms: Number(durationMs.toFixed(2)),
         status: isError ? 'ERROR' : 'OK',
       };
@@ -59,7 +58,7 @@ const sdk = new NodeSDK({
   }),
 
 
-  traceExporter: new CustomizedExporter(),
+  traceExporter: new ConsoleSpanExporter(),
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-fs': { enabled: false },
@@ -78,15 +77,15 @@ export const startTracing = () => {
     .then(() => console.log(`OpenTelemetry SDK started for [${serviceName}]`))
     .catch((err) => console.log('OpenTelemetry SDK initialization error:', err?.message || err));
 
-  const handleShutdown = (signal: string) => {
-    sdk.shutdown()
-      .then(() => console.log(`OpenTelemetry SDK stopped (${signal})`))
-      .catch((err) => console.log('OpenTelemetry SDK shutdown error:', err?.message || err))
-      .finally(() => process.exit(0));
-  };
+  // const handleShutdown = (signal: string) => {
+  //   sdk.shutdown()
+  //     .then(() => console.log(`OpenTelemetry SDK stopped (${signal})`))
+  //     .catch((err) => console.log('OpenTelemetry SDK shutdown error:', err?.message || err))
+  //     .finally(() => process.exit(0));
+  // };
 
-  process.on('SIGTERM', () => handleShutdown('SIGTERM'));
-  process.on('SIGINT', () => handleShutdown('SIGINT'));
+  // process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+  // process.on('SIGINT', () => handleShutdown('SIGINT'));
 };
 
 

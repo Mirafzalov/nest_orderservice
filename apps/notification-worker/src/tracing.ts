@@ -10,8 +10,15 @@ class CustomizedExporter implements SpanExporter {
   export(spans: ReadableSpan[], resultCallback: (result: ExportResult) => void): void {
     for (const span of spans) {
 
+      const pattern = (
+        span.attributes['rpc.method'] ||
+        span.attributes['messaging.rabbitmq.routing_key'] ||
+        span.attributes['messaging.destination'] || null
+      ) as string
+
+
       const isError = span.status.code === SpanStatusCode.ERROR;
-      
+
       const path = (span.attributes['http.route'] ||
         span.attributes['http.target'] ||
         span.attributes['messaging.destination'] ||
@@ -46,7 +53,7 @@ class CustomizedExporter implements SpanExporter {
     resultCallback({ code: ExportResultCode.SUCCESS });
   }
 
-  async shutdown(): Promise<void> {}
+  async shutdown(): Promise<void> { }
 }
 
 const serviceName = 'notification-worker';
