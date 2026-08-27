@@ -1,5 +1,6 @@
-import { ClientRMQ, OutgoingEvent } from "@nestjs/microservices"
+import { ClientRMQ, OutgoingEvent, RmqRecordBuilder } from "@nestjs/microservices"
 import { trace } from "@opentelemetry/api";
+
 
 
 export class TracingClientRMQ extends ClientRMQ {
@@ -13,18 +14,17 @@ export class TracingClientRMQ extends ClientRMQ {
             activeSpan.setAttribute('rpc.method', patternStr);
             activeSpan.setAttribute('nestjs.pattern', patternStr);
         }
+        
+        // const request = trace.getSpanContext
 
-
-
-        const customPacket = packet as Record<string, any>;
-
-        customPacket.options = customPacket.options || {};
-        customPacket.options.headers = {
-            ...(customPacket.options.headers || {}),
-            'nestjs.pattern': patternStr,
-            'rpc.method': patternStr,
+        packet.data = packet.data || {};
+        
+        packet.data.headers = {
+            ...(packet.data.headers || {}),
+            'x-nestjs-pattern': patternStr,
         };
 
         return super.publish(packet, callback);
     }
 }
+

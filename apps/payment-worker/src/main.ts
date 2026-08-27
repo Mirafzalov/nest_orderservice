@@ -4,10 +4,12 @@ import { PaymentWorkerModule } from './payment-worker.module';
 import { RabbitMQService } from './rabbit/rabbitmq.service';
 
 
-startTracing();
 
 
 async function bootstrap() {
+
+  await startTracing();
+
   const app = await NestFactory.create(PaymentWorkerModule);
 
   const rqmservice = app.get(RabbitMQService)
@@ -17,7 +19,6 @@ async function bootstrap() {
   app.connectMicroservice(rqmservice.getOptions('product_queue'))
 
   app.connectMicroservice(rqmservice.getOptions('order_queue'))
-
 
 
   await app.startAllMicroservices();

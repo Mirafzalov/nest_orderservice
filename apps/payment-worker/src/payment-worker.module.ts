@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RabbitMQModule } from './rabbit/rabbitmq.module';
 import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from './health/health.module';
+import { TracePatternInterceptor } from './tracing-interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -28,7 +30,11 @@ import { HealthModule } from './health/health.module';
 
 
     OrderModule, ProductModule, UserModule, RabbitMQModule, HealthModule],
+
   controllers: [PaymentWorkerController],
-  providers: [PaymentWorkerService],
+  providers: [
+    PaymentWorkerService
+  ],
 })
+
 export class PaymentWorkerModule { }

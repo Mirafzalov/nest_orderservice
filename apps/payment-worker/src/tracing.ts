@@ -11,12 +11,12 @@ class CustomizedExporter implements SpanExporter {
     for (const span of spans) {
 
       const isError = span.status.code === SpanStatusCode.ERROR;
-      
-      const path = (span.attributes['http.route'] ||
-        span.attributes['http.target'] ||
-        span.attributes['messaging.destination'] ||
+
+      const pattern = (
         span.attributes['rpc.method'] ||
-        span.name) as string;
+        span.attributes['nestjs.pattern'] ||
+        null
+      ) as string | null;
 
 
       const isServerSpan = span.kind === SpanKind.SERVER;
@@ -33,8 +33,7 @@ class CustomizedExporter implements SpanExporter {
         trace_id: span.spanContext().traceId,
         span_id: span.spanContext().spanId,
         queue: span.name.split(' ')[0],
-        // method: (span.attributes['http.method'] || span.attributes['http.request.method'] || null) as string | null,
-        // path,
+        pattern,
         duration_ms: Number(durationMs.toFixed(2)),
         status: isError ? 'ERROR' : 'OK',
       };
@@ -45,7 +44,7 @@ class CustomizedExporter implements SpanExporter {
     resultCallback({ code: ExportResultCode.SUCCESS });
   }
 
-  async shutdown(): Promise<void> {}
+  async shutdown(): Promise<void> { }
 }
 
 const serviceName = 'payment-worker';
@@ -58,7 +57,7 @@ const sdk = new NodeSDK({
   }),
 
 
-  traceExporter: new ConsoleSpanExporter(),
+  traceExporter: new CustomizedExporter(),
   instrumentations: [
     getNodeAutoInstrumentations({
       '@opentelemetry/instrumentation-fs': { enabled: false },
@@ -72,8 +71,8 @@ const sdk = new NodeSDK({
 
 
 
-export const startTracing = () => {
-  Promise.resolve(sdk.start())
+export const startTracing = async () => {
+  Promise.resolve(await sdk.start())
     .then(() => console.log(`OpenTelemetry SDK started for [${serviceName}]`))
     .catch((err) => console.log('OpenTelemetry SDK initialization error:', err?.message || err));
 

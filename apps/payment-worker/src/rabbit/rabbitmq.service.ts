@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RmqOptions, Transport } from '@nestjs/microservices';
+import { CustomStrategy, RmqOptions, Transport } from '@nestjs/microservices';
+import { TracingServerRMQ } from './tracing-server-rmq';
 
 @Injectable()
 export class RabbitMQService {
     constructor(private readonly configService: ConfigService) { }
 
-    getOptions(queue: string, noAck = true): RmqOptions {
+    getOptions(queue: string, noAck = true): CustomStrategy {
         return {
-            transport: Transport. RMQ,
-            options: {
-                urls: [this.configService.get<string>('RABBITMQ_URI')!],
+            strategy: new TracingServerRMQ({
+                urls: [process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672'],
                 queue,
-                noAck, 
+                noAck,
                 queueOptions: {
                     durable: true,
                 },
-            },
+            }),
         };
     }
 }

@@ -1,8 +1,7 @@
-import { Controller, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from '../dto/order.dto';
-
 
 @Controller('order')
 export class OrderController {
@@ -28,25 +27,25 @@ export class OrderController {
         try {
             const order = await this.orderService.create(data)
 
-            
-            notification = {status: 'paid'}
+
+            notification = { status: 'paid' }
 
             result = order
             console.log('success')
 
-        } catch(error) {
+        } catch (error) {
             console.log(error.message)
-            
 
-            notification = {status: 'failed'}
+
+            notification = { status: 'failed' }
 
             result = error.message
-            
+
             console.log('fail')
 
         }
 
-        this.rabbit.emit('notification.status', {notification, result})
+        this.rabbit.emit('notification.status', { notification, result })
 
         return result
 
@@ -59,7 +58,7 @@ export class OrderController {
     }
 
     @MessagePattern('order.update')
-    update(@Payload() orderData: {id: number, data: CreateOrderDto}) {
+    update(@Payload() orderData: { id: number, data: CreateOrderDto }) {
         return this.orderService.update(orderData.id, orderData.data)
     }
 
