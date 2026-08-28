@@ -15,15 +15,6 @@ export class TracingClientRMQ extends ClientRMQ {
             activeSpan.setAttribute('nestjs.pattern', patternStr);
         }
         
-        // const request = trace.getSpanContext
-
-        packet.data = packet.data || {};
-        
-        packet.data.headers = {
-            ...(packet.data.headers || {}),
-            'x-nestjs-pattern': patternStr,
-        };
-
         return super.publish(packet, callback);
     }
 }

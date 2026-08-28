@@ -1,9 +1,9 @@
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { ReadableSpan, SpanExporter } from '@opentelemetry/sdk-trace-base';
+import { ReadableSpan, SimpleSpanProcessor, SpanExporter } from '@opentelemetry/sdk-trace-base';
 import { ExportResult, ExportResultCode } from '@opentelemetry/core';
-import { SpanKind, SpanStatusCode } from '@opentelemetry/api';
+import { SpanStatusCode } from '@opentelemetry/api';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 class CustomizedExporter implements SpanExporter {
@@ -27,7 +27,7 @@ class CustomizedExporter implements SpanExporter {
         span.name) as string;
       const startTimeMs = span.startTime[0] * 1000 + span.startTime[1] / 1e6;
       const durationMs = span.duration[0] * 1000 + span.duration[1] / 1e6;
-      
+
 
       const logData = {
         timestamp: new Date(startTimeMs).toISOString(),

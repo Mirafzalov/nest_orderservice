@@ -4,6 +4,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { PinoLogger } from 'nestjs-pino';
+
 
 
 @Controller('products')
@@ -12,11 +14,15 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 export class ProductController {
     constructor(
         @Inject('RABBIT_PRODUCT')
-        private readonly rabbit: ClientProxy
+        private readonly rabbit: ClientProxy,
+        private readonly logger: PinoLogger
     ) { }
 
     @Get()
     async findAllProduct() {
+        this.logger.info('Getting all products...')
+        
+
         return await firstValueFrom(this.rabbit.send('product.findAll', {}))
     }
 

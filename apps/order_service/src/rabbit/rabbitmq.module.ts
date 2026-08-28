@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TracingClientRMQ } from "../tracing-client-rmq";
+import { TracingClientRMQ } from "../tracing/tracing-client-rmq";
 
 @Module({})
 export class RabbitMQModule {
