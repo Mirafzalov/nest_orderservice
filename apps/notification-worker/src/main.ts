@@ -1,8 +1,8 @@
-import { startTracing } from './tracing';
+import { startTracing } from './tracing/tracing';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NOTIFICATION_QUEUE } from '../contracts/notification.constants';
-import { TracingServerRMQ } from './tracing-client-rmq';
+import { TracingServerRMQ } from './tracing/tracing-client-rmq';
 
 async function bootstrap() {
   await startTracing();

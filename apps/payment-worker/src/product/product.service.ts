@@ -2,12 +2,14 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../db/entities/product.entity';
 import { Repository } from 'typeorm';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class ProductService {
     constructor(
         @InjectRepository(Product)
-        private readonly productRepository: Repository<Product>
+        private readonly productRepository: Repository<Product>,
+        private readonly logger: PinoLogger
     ) { }
 
     async findAll() {
@@ -42,7 +44,6 @@ export class ProductService {
     }
 
     async update(id, data) {
-
         const product = await this.productRepository.findOneBy({ id })
 
         if (!product) {

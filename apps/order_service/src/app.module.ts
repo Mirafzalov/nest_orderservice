@@ -8,7 +8,26 @@ import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from './health/health.module';
 import { LoggerModule } from 'nestjs-pino';
 
+// import { pinoWaitingRoom } from './tracing/tracing';
+// import pretty from 'pino-pretty';
+// import { Writable } from 'stream';
 
+
+// const customStream = new Writable({
+//   write(chunk, encoding, callback) {
+//     pinoWaitingRoom.push(chunk.toString());
+
+//     callback();
+//   }
+// });
+
+// const prettyStream = pretty({
+// // colorize: false,
+//   singleLine: true,
+//   // ignore: 'pid,hostname',
+//   messageFormat: '{ {msg} }',
+//   destination: customStream,
+// });
 
 
 @Module({
@@ -22,22 +41,17 @@ import { LoggerModule } from 'nestjs-pino';
       pinoHttp: {
         autoLogging: false,
 
+        base: undefined,
         serializers: {
-          req: () => undefined,
-          res: () => undefined
+          req: (req) => ({
+            method: req.method,
+            url: req.url,
+          }),
+          res: (res) => ({
+            statusCode: res.statusCode,
+          })
         },
 
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            colorize: false,
-            singleLine: true,
-
-            ignore: 'pid,hostname',
-
-            messageFormat: '{msg}',
-          },
-        },
       },
     }),
 

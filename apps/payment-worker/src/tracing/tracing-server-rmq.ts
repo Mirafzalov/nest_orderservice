@@ -8,7 +8,6 @@ export class TracingServerRMQ extends ServerRMQ implements CustomTransportStrate
         try {
 
             const rawMessage = JSON.parse(message.content.toString());
-            console.log(rawMessage)
 
             const pattern = typeof rawMessage.pattern === 'string' ? rawMessage.pattern : JSON.stringify(rawMessage.pattern);
 

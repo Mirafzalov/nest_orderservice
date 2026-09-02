@@ -6,8 +6,22 @@ import { ExportResult, ExportResultCode } from '@opentelemetry/core';
 import { SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
+
+export const pinoWaitingRoom: string[] = [];
+
 class CustomizedExporter implements SpanExporter {
   export(spans: ReadableSpan[], resultCallback: (result: ExportResult) => void): void {
+
+
+    // while (pinoWaitingRoom.length > 0) {
+    //   const pinoMessage = pinoWaitingRoom.shift();
+    //   if (pinoMessage) {
+    //     process.stdout.write(pinoMessage);
+    //   }
+    // }
+
+
+
     for (const span of spans) {
 
       const isError = span.status.code === SpanStatusCode.ERROR;
@@ -86,6 +100,3 @@ export const startTracing = async () => {
   // process.on('SIGTERM', () => handleShutdown('SIGTERM'));
   // process.on('SIGINT', () => handleShutdown('SIGINT'));
 };
-
-
-

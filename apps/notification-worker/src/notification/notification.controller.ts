@@ -1,11 +1,13 @@
 import { Controller } from '@nestjs/common';
-import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { NotificationService } from './notification.service';
+import { PinoLogger } from 'nestjs-pino';
 
 @Controller()
 export class NotificationController {
     constructor(
-        private readonly notificationService: NotificationService
+        private readonly notificationService: NotificationService,
+        private readonly logger: PinoLogger
     ) { }
     
 
@@ -13,6 +15,9 @@ export class NotificationController {
     sendMessage(
         @Payload() data: { notification, result },
     ) {
+
+        this.logger.info('Sending notification to Telegram...')
+        console.log('mmmmmmmmmmmmmmmmmm');
         
         let {notification, result } = data
         let text = '';

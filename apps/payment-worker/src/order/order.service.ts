@@ -3,9 +3,7 @@ import { CreateOrderDto } from '../dto/order.dto';
 import { Repository } from 'typeorm';
 import { Order } from '../db/entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
-import { response } from 'express';
+import { PinoLogger } from 'nestjs-pino';
 
 
 @Injectable()
@@ -13,6 +11,7 @@ export class OrderService {
     constructor(
         @InjectRepository(Order)
         private readonly orderRepository: Repository<Order>,
+        private readonly logger: PinoLogger
     ) { }
 
     async findAll() {

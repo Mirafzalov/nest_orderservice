@@ -36,9 +36,9 @@ export class NotificationService
     }
 
     async sendMessage(text) {
-        this.bot.api.sendMessage(505523351, '💰 Payment received successfully!')
+        await this.bot.api.sendMessage(505523351, '💰 Payment received successfully!')
 
-        this.bot.api.sendMessage(505523351, text,
+        await this.bot.api.sendMessage(505523351, text,
             { parse_mode: 'HTML' }
         )
     }

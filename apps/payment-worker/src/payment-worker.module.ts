@@ -8,8 +8,31 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RabbitMQModule } from './rabbit/rabbitmq.module';
 import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from './health/health.module';
-import { TracePatternInterceptor } from './tracing-interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggerModule } from 'nestjs-pino';
+import { Writable } from 'stream';
+import pretty from 'pino-pretty';
+import { pinoWaitingRoom } from './tracing/tracing';
+
+
+
+
+// const customStream = new Writable({
+//   write(chunk, encoding, callback) {
+//     pinoWaitingRoom.push(chunk.toString());
+
+//     callback();
+//   }
+// });
+
+// const prettyStream = pretty({
+//   colorize: false,
+//   singleLine: true,
+//   ignore: 'pid,hostname',
+//   messageFormat: '{msg}',
+//   destination: customStream,
+// });
+
+
 
 @Module({
   imports: [
@@ -26,6 +49,24 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       database: 'db',
       autoLoadEntities: true,
       synchronize: false,
+    }),
+
+    LoggerModule.forRoot({
+      pinoHttp: {
+        autoLogging: false,
+
+        base: undefined,
+        serializers: {
+          req: (req) => ({
+            method: req.method,
+            url: req.url,
+          }),
+          res: (res) => ({
+            statusCode: res.statusCode,
+          })
+        },
+
+      },
     }),
 
 

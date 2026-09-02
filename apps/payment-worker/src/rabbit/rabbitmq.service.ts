@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CustomStrategy, RmqOptions, Transport } from '@nestjs/microservices';
-import { TracingServerRMQ } from './tracing-server-rmq';
+import { TracingServerRMQ } from '../tracing/tracing-server-rmq';
 
 @Injectable()
 export class RabbitMQService {

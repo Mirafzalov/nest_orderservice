@@ -1,4 +1,4 @@
-import { startTracing } from './tracing';
+import { startTracing } from './tracing/tracing';
 import { NestFactory } from '@nestjs/core';
 import { PaymentWorkerModule } from './payment-worker.module';
 import { RabbitMQService } from './rabbit/rabbitmq.service';
