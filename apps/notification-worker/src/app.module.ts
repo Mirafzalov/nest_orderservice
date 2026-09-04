@@ -4,28 +4,9 @@ import { AppService } from './app.service';
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
-import { Writable } from 'stream';
-import pretty from 'pino-pretty';
-import { pinoWaitingRoom } from './tracing/tracing';
+import { HealthModule } from './health/health.module';
 
 
-
-
-// const customStream = new Writable({
-//   write(chunk, encoding, callback) {
-//     pinoWaitingRoom.push(chunk.toString());
-
-//     callback();
-//   }
-// });
-
-// const prettyStream = pretty({
-//   colorize: false,
-//   singleLine: true,
-//   ignore: 'pid,hostname',
-//   messageFormat: '{msg}',
-//   destination: customStream,
-// });
 
 
 @Module({
@@ -38,16 +19,23 @@ import { pinoWaitingRoom } from './tracing/tracing';
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'info',
-        // autoLogging: false,
+        autoLogging: false,
 
-        // serializers: {
-        //   req: () => undefined,
-        //   res: () => undefined
-        // },
+        base: undefined,
 
-        // stream: prettyStream
+        serializers: {
+          req: (req) => ({
+            method: req.method,
+            url: req.url,
+          }),
+          res: () => undefined
+        },
       },
     }),
+
+
+    NotificationModule,
+    HealthModule,
   ],
 
   controllers: [AppController],

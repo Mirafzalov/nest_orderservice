@@ -16,7 +16,7 @@ export class OrderController {
 
     @MessagePattern(MESSAGE_PATTERNS.ORDER_FINDALL)
     findAll(@Payload() data: any) {
-        this.logger.info('Proccessing all orders...') 
+        this.logger.info('Sending all orders...') 
         return this.orderService.findAll()
     }
 
@@ -24,7 +24,7 @@ export class OrderController {
     async create(
         @Payload() data: CreateOrderDto,
     ) {
-        this.logger.info('Proccessing new order... ')
+        this.logger.info('Sending new order... ')
 
         let result: any
         let notification = {}
@@ -47,7 +47,7 @@ export class OrderController {
 
         }
 
-        this.rabbit.emit('notification.status', { notification, result })
+        this.rabbit.emit(MESSAGE_PATTERNS.NOTIFICATION_STATUS, { notification, result })
 
         return result
 
@@ -56,17 +56,19 @@ export class OrderController {
 
     @MessagePattern(MESSAGE_PATTERNS.ORDER_FINDONE)
     findOne(@Payload() id: number) {
-        this.logger.info(`Proccessing order with id = ${id}...`)
+        this.logger.info(`Sending order with id = ${id}...`)
         return this.orderService.findOne(id)
     }
 
     @MessagePattern(MESSAGE_PATTERNS.ORDER_UPDATE)
     update(@Payload() orderData: { id: number, data: CreateOrderDto }) {
+        this.logger.info(`Sending updated order with id = ${orderData.id}...`)
         return this.orderService.update(orderData.id, orderData.data)
     }
 
     @MessagePattern(MESSAGE_PATTERNS.ORDER_DELETE)
     remove(@Payload() id: number) {
+        this.logger.info(`Sending deleted order with id = ${id}...`)
         return this.orderService.remove(id)
     }
 }   

@@ -20,7 +20,7 @@ export class ProductController {
             {
                 pattern: 'PRODUCT_FINDALL',
             },
-            'Proccessing all products...')
+            'Sending all products...')
 
         return this.productService.findAll()
     }
@@ -29,7 +29,7 @@ export class ProductController {
     async create(
         @Payload() data: CreateProductDto
     ) {
-        this.logger.info('Proccessing new product... ')
+        this.logger.info('Sending new product... ')
 
         try {
             const result = await this.productService.create(data)
@@ -44,21 +44,21 @@ export class ProductController {
 
     @MessagePattern(MESSAGE_PATTERNS.PRODUCT_FINDONE)
     findOne(@Payload() id: { id: number }) {
-        this.logger.info(`Proccessing product with id = ${id.id}...`)
+        this.logger.info(`Sending product with id = ${id.id}...`)
 
         return this.productService.findOne(id)
     }
 
     @MessagePattern(MESSAGE_PATTERNS.PRODUCT_UPDATE)
     update(@Payload() data: { id: number, productData: CreateOrderDto }) {
-        this.logger.info(`Proccessing update product with id = ${data.id}...`)
+        this.logger.info(`Sending updated product with id = ${data.id}...`)
 
         return this.productService.update(data.id, data.productData)
     }
 
     @MessagePattern(MESSAGE_PATTERNS.PRODUCT_DELETE)
     remove(@Payload() id: number) {
-        this.logger.info(`Proccessing delete product with id = ${id}...`)
+        this.logger.info(`Sending deleted product with id = ${id}...`)
         return this.productService.remove(id)
     }
 

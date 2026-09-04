@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { NotificationService } from './notification.service';
 import { PinoLogger } from 'nestjs-pino';
+import { MESSAGE_PATTERNS } from 'contracts/message-patterns';
 
 @Controller()
 export class NotificationController {
@@ -11,13 +12,13 @@ export class NotificationController {
     ) { }
     
 
-    @EventPattern('notification.status')
+    @EventPattern(MESSAGE_PATTERNS.NOTIFICATION_STATUS)
     sendMessage(
         @Payload() data: { notification, result },
     ) {
-
+        console.log('Notification data received:');
+        
         this.logger.info('Sending notification to Telegram...')
-        console.log('mmmmmmmmmmmmmmmmmm');
         
         let {notification, result } = data
         let text = '';

@@ -22,40 +22,40 @@ class CustomizedExporter implements SpanExporter {
 
 
 
-    for (const span of spans) {
+    // for (const span of spans) {
 
-      const isError = span.status.code === SpanStatusCode.ERROR;
+    //   const isError = span.status.code === SpanStatusCode.ERROR;
 
-      const pattern = (
-        span.attributes['rpc.method'] ||
-        span.attributes['nestjs.pattern'] ||
-        null
-      ) as string | null;
+    //   const pattern = (
+    //     span.attributes['rpc.method'] ||
+    //     span.attributes['nestjs.pattern'] ||
+    //     null
+    //   ) as string | null;
 
 
-      const isServerSpan = span.kind === SpanKind.SERVER;
-      const isConsumerSpan = span.kind === SpanKind.CONSUMER;
-      if (!isServerSpan && !isConsumerSpan && !isError) continue;
+    //   const isServerSpan = span.kind === SpanKind.SERVER;
+    //   const isConsumerSpan = span.kind === SpanKind.CONSUMER;
+    //   if (!isServerSpan && !isConsumerSpan && !isError) continue;
 
-      const startTimeMs = span.startTime[0] * 1000 + span.startTime[1] / 1e6;
-      const durationMs = span.duration[0] * 1000 + span.duration[1] / 1e6;
+    //   const startTimeMs = span.startTime[0] * 1000 + span.startTime[1] / 1e6;
+    //   const durationMs = span.duration[0] * 1000 + span.duration[1] / 1e6;
 
-      const logData = {
-        timestamp: new Date(startTimeMs).toISOString(),
-        level: isError ? 'ERROR' : 'INFO',
-        service: span.resource.attributes[ATTR_SERVICE_NAME],
-        trace_id: span.spanContext().traceId,
-        span_id: span.spanContext().spanId,
-        queue: span.name.split(' ')[0],
-        pattern,
-        duration_ms: Number(durationMs.toFixed(2)),
-        status: isError ? 'ERROR' : 'OK',
-      };
+    //   const logData = {
+    //     timestamp: new Date(startTimeMs).toISOString(),
+    //     level: isError ? 'ERROR' : 'INFO',
+    //     service: span.resource.attributes[ATTR_SERVICE_NAME],
+    //     trace_id: span.spanContext().traceId,
+    //     span_id: span.spanContext().spanId,
+    //     queue: span.name.split(' ')[0],
+    //     pattern,
+    //     duration_ms: Number(durationMs.toFixed(2)),
+    //     status: isError ? 'ERROR' : 'OK',
+    //   };
 
-      console.log(JSON.stringify(logData));
-    }
+    //   console.log(JSON.stringify(logData));
+    // }
 
-    resultCallback({ code: ExportResultCode.SUCCESS });
+    // resultCallback({ code: ExportResultCode.SUCCESS });
   }
 
   async shutdown(): Promise<void> { }

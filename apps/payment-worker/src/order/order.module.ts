@@ -17,7 +17,8 @@ import { ConfigModule } from '@nestjs/config';
             transport: Transport.RMQ,
             options: {
                 urls: ['amqp://guest:guest@rabbitmq:5672'],
-                queue: NOTIFICATION_QUEUE,
+                queue: 'notification_queue',
+                noAck: true,
                 queueOptions: {
                     durable: true,
                 }
